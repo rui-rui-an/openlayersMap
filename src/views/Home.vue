@@ -2,7 +2,7 @@
   <div class="home">
     <div class="btns">
       <el-button @click="addPoint">添加点</el-button>
-      <el-button @click="addPoint">添加线</el-button>
+      <el-button @click="addLine">添加线</el-button>
       <el-button @click="addPoint">添加面</el-button>
       <el-button @click="addPoint">定位到某个点</el-button>
       <el-button @click="addPoint">点击进行绘制</el-button>
@@ -80,7 +80,6 @@ export default {
       })
     },
     addPoint () {
-      console.log(1111);
       //创建一个点
       var point = new ol.Feature({
         geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857'))
@@ -116,6 +115,43 @@ export default {
       });
       //将绘制层添加到地图容器中
       this.map.addLayer(vector);
+    },
+    addLine(){
+      //创建一个线
+      var Line = new ol.Feature({
+            geometry: new ol.geom.LineString([[8208725.0, 3835304.0], [16055444.0, 4578883.0]])
+        });
+
+        //设置线的样式
+        Line.setStyle(new ol.style.Style({
+            //填充色
+            fill: new ol.style.Fill({
+                color: 'rgba(255, 255, 255, 0.2)'
+            }),
+            //边线颜色
+            stroke: new ol.style.Stroke({
+                color: '#ffcc33',
+                width: 5
+            }),
+            //形状
+            image: new ol.style.Circle({
+                radius: 7,
+                fill: new ol.style.Fill({
+                    color: '#ffcc33'
+                })
+            })
+        }));
+
+        //实例化一个矢量图层Vector作为绘制层
+        var source = new ol.source.Vector({
+            features: [Line]
+        });
+        //创建一个图层
+        var vector = new ol.layer.Vector({
+            source: source
+        });
+        //将绘制层添加到地图容器中
+        this.map.addLayer(vector);
     }
   }
 }
