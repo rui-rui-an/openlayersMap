@@ -3,11 +3,17 @@
     <div class="btns">
       <el-button @click="addPoint">添加点</el-button>
       <el-button @click="addLine">添加线</el-button>
-      <el-button @click="addPoint">添加面</el-button>
+      <el-button @click="addArea">添加面</el-button>
       <el-button @click="toPoint">定位到某个点</el-button>
       <div>选择进行绘制</div>
       <el-select v-model="selectValue" @change="selectChange">
-        <el-option v-for="item in selectList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+        <el-option
+          v-for="item in selectList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        >
+        </el-option>
       </el-select>
 
       <el-button @click="addPic">添加图片标注</el-button>
@@ -32,44 +38,44 @@
 <script>
 const selectList = [
   {
-    label: '清空绘制图形',
-    value: 'None',
+    label: "清空绘制图形",
+    value: "None",
   },
   {
-    label: '点',
-    value: 'Point',
+    label: "点",
+    value: "Point",
   },
   {
-    label: '线',
-    value: 'LineString',
+    label: "线",
+    value: "LineString",
   },
   {
-    label: '多边形',
-    value: 'Polygon',
+    label: "多边形",
+    value: "Polygon",
   },
   {
-    label: '圆',
-    value: 'Circle',
+    label: "圆",
+    value: "Circle",
   },
   {
-    label: '正方形',
-    value: 'Square',
+    label: "正方形",
+    value: "Square",
   },
   {
-    label: '长方形',
-    value: 'Box',
+    label: "长方形",
+    value: "Box",
   },
 ]
-import * as ol from 'openlayers'
+import * as ol from "openlayers"
 export default {
   data() {
     return {
       map: null,
       selectList: selectList,
-      selectValue: 'None',
-      draw: '',
-      source: '',
-      vector: '',
+      selectValue: "None",
+      draw: "",
+      source: "",
+      vector: "",
       popupContentShow: false,
     }
   },
@@ -81,7 +87,7 @@ export default {
   },
   methods: {
     initMap() {
-      var projection = ol.proj.get('EPSG:3857')
+      var projection = ol.proj.get("EPSG:3857")
       //分辨率
       var resolutions = []
       for (var i = 0; i < 19; i++) {
@@ -100,19 +106,27 @@ export default {
         //出图基地址
         tileUrlFunction: function (tileCoord, pixelRatio, proj) {
           if (!tileCoord) {
-            return ''
+            return ""
           }
           var z = tileCoord[0]
           var x = tileCoord[1]
           var y = tileCoord[2]
 
           if (x < 0) {
-            x = 'M' + -x
+            x = "M" + -x
           }
           if (y < 0) {
-            y = 'M' + -y
+            y = "M" + -y
           }
-          return 'http://online3.map.bdimg.com/onlinelabel/?qt=tile&x=' + x + '&y=' + y + '&z=' + z + '&styles=pl&udt=20151021&scaler=1&p=1'
+          return (
+            "http://online3.map.bdimg.com/onlinelabel/?qt=tile&x=" +
+            x +
+            "&y=" +
+            y +
+            "&z=" +
+            z +
+            "&styles=pl&udt=20151021&scaler=1&p=1"
+          )
         },
       })
       //百度地图
@@ -121,10 +135,14 @@ export default {
       })
       //地图容器
       this.map = new ol.Map({
-        target: 'map',
+        target: "map",
         layers: [baidu_layer],
         view: new ol.View({
-          center: ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857'),
+          center: ol.proj.transform(
+            [116.403, 39.924],
+            "EPSG:4326",
+            "EPSG:3857"
+          ),
           zoom: 12,
         }),
       })
@@ -132,25 +150,27 @@ export default {
     addPoint() {
       //创建一个点
       var point = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857')),
+        geometry: new ol.geom.Point(
+          ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857")
+        ),
       })
       //设置点1的样式信息
       point.setStyle(
         new ol.style.Style({
           //填充色
           fill: new ol.style.Fill({
-            color: 'rgba(255, 255, 255, 0.2)',
+            color: "rgba(255, 255, 255, 0.2)",
           }),
           //边线颜色
           stroke: new ol.style.Stroke({
-            color: '#ffcc33',
+            color: "#ffcc33",
             width: 2,
           }),
           //形状
           image: new ol.style.Circle({
             radius: 17,
             fill: new ol.style.Fill({
-              color: '#ffcc33',
+              color: "#ffcc33",
             }),
           }),
         })
@@ -170,7 +190,7 @@ export default {
 
       this.map.getView().animate({
         //将地理坐标转为投影坐标
-        center: ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857"),
         duration: 500,
         zoom: 14,
       })
@@ -178,7 +198,10 @@ export default {
     addLine() {
       //创建一个线
       var Line = new ol.Feature({
-        geometry: new ol.geom.LineString([ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857'), ol.proj.transform([116.503, 39.994], 'EPSG:4326', 'EPSG:3857')]),
+        geometry: new ol.geom.LineString([
+          ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857"),
+          ol.proj.transform([116.503, 39.994], "EPSG:4326", "EPSG:3857"),
+        ]),
       })
 
       //设置线的样式
@@ -186,18 +209,18 @@ export default {
         new ol.style.Style({
           //填充色
           fill: new ol.style.Fill({
-            color: 'rgba(255, 255, 255, 0.2)',
+            color: "rgba(255, 255, 255, 0.2)",
           }),
           //边线颜色
           stroke: new ol.style.Stroke({
-            color: '#ffcc33',
+            color: "#ffcc33",
             width: 5,
           }),
           //形状
           image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-              color: '#ffcc33',
+              color: "#ffcc33",
             }),
           }),
         })
@@ -218,7 +241,7 @@ export default {
       //这里给动画设置一个初始值
       this.map.getView().animate({
         //将地理坐标转为投影坐标
-        center: ol.proj.transform([117.403, 42.924], 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform([117.403, 42.924], "EPSG:4326", "EPSG:3857"),
         duration: 1000,
         zoom: 12,
       })
@@ -234,16 +257,16 @@ export default {
         source: this.source,
         style: new ol.style.Style({
           fill: new ol.style.Fill({
-            color: 'rgba(255, 255, 255, 0.2)',
+            color: "rgba(255, 255, 255, 0.2)",
           }),
           stroke: new ol.style.Stroke({
-            color: '#ffcc33',
+            color: "#ffcc33",
             width: 10,
           }),
           image: new ol.style.Circle({
             radius: 7,
             fill: new ol.style.Fill({
-              color: '#ffcc33',
+              color: "#ffcc33",
             }),
           }),
         }),
@@ -256,7 +279,7 @@ export default {
     addInteraction() {
       let type
       //绘制对象
-      if (this.selectValue !== 'None') {
+      if (this.selectValue !== "None") {
         type = this.selectValue
         if (this.source == null) {
           this.source = new ol.source.Vector({ wrapX: false })
@@ -264,12 +287,12 @@ export default {
           this.vector.setSource(this.source)
         }
         var geometryFunction, maxPoints
-        if (this.selectValue === 'Square') {
-          type = 'Circle'
+        if (this.selectValue === "Square") {
+          type = "Circle"
           //正方形图形（圆）
           geometryFunction = ol.interaction.Draw.createRegularPolygon(4)
-        } else if (this.selectValue === 'Box') {
-          type = 'LineString'
+        } else if (this.selectValue === "Box") {
+          type = "LineString"
           maxPoints = 2
           geometryFunction = function (coordinates, geometry) {
             if (!geometry) {
@@ -278,7 +301,9 @@ export default {
             }
             var start = coordinates[0]
             var end = coordinates[1]
-            geometry.setCoordinates([[start, [start[0], end[1]], end, [end[0], start[1]], start]])
+            geometry.setCoordinates([
+              [start, [start[0], end[1]], end, [end[0], start[1]], start],
+            ])
             return geometry
           }
         }
@@ -307,25 +332,65 @@ export default {
       //添加交互绘制功能控件
       this.addInteraction()
     },
+    addArea() {
+      //根据范围获取多边形
+      var Rectangle = new ol.Feature({
+        geometry: new ol.geom.Polygon.fromExtent([
+          8208725.0, 2035304.0, 12841418.0, 4068487.0,
+        ]),
+      })
+
+      Rectangle.setStyle(
+        new ol.style.Style({
+          fill: new ol.style.Fill({
+            color: "rgba(33,33,33,0.5)",
+          }),
+          stroke: new ol.style.Stroke({
+            color: "#ffcc33",
+            width: 4,
+          }),
+          image: new ol.style.Circle({
+            radius: 7,
+            fill: new ol.style.Fill({
+              color: "#ffcc33",
+            }),
+          }),
+        })
+      )
+
+      //实例化一个矢量图层Vector作为绘制层
+      var source = new ol.source.Vector({
+        features: [Rectangle],
+      })
+      //创建一个图层
+      var vector = new ol.layer.Vector({
+        source: source,
+      })
+      //将绘制层添加到地图容器中
+      this.map.addLayer(vector)
+    },
     addPointAndView() {},
     addPopup() {
       this.addPic()
       /**
        * 为map添加鼠标移动事件监听，当指向标注时改变鼠标光标状态
        */
-      this.map.on('pointermove', e => {
+      this.map.on("pointermove", (e) => {
         var pixel = this.map.getEventPixel(e.originalEvent)
         var hit = this.map.hasFeatureAtPixel(pixel)
-        this.map.getTargetElement().style.cursor = hit ? 'pointer' : ''
+        this.map.getTargetElement().style.cursor = hit ? "pointer" : ""
       })
       /**
        * 为map添加点击事件监听，渲染弹出popup
        */
-      this.map.on('click', evt => {
+      this.map.on("click", (evt) => {
         //判断当前单击处是否有要素，捕获到要素时弹出popup
-        var feature = this.map.forEachFeatureAtPixel(evt.pixel, (feature, layer) => {
-          return feature
-        })
+        var feature = this.map.forEachFeatureAtPixel(
+          evt.pixel,
+          (feature, layer) => {
+            return feature
+          }
+        )
         if (feature) {
           let popup = new ol.Overlay(
             /** @type {olx.OverlayOptions} */
@@ -335,7 +400,7 @@ export default {
               //当前窗口可见
               autoPan: true,
               //Popup放置的位置
-              positioning: 'bottom-center',
+              positioning: "bottom-center",
               //是否应该停止事件传播到地图窗口
               stopEvent: false,
               autoPanAnimation: {
@@ -356,24 +421,26 @@ export default {
           /**{olx.style.IconOptions}类型*/
           image: new ol.style.Icon({
             anchor: [0.5, 60],
-            anchorOrigin: 'top-right',
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'pixels',
-            offsetOrigin: 'top-right',
+            anchorOrigin: "top-right",
+            anchorXUnits: "fraction",
+            anchorYUnits: "pixels",
+            offsetOrigin: "top-right",
             // offset:[0,10],
             //图标缩放比例
             // scale:0.5,
             //透明度
             opacity: 0.75,
             //图标的url
-            src: require('@/assets/logo.png'),
+            src: require("@/assets/logo.png"),
           }),
         })
       }
       //实例化Vector要素，通过矢量图层添加到地图容器中
       var iconFeature = new ol.Feature({
         // geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857')),
-        geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857')),
+        geometry: new ol.geom.Point(
+          ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857")
+        ),
       })
 
       iconFeature.setStyle(createLabelStyle(iconFeature))
@@ -398,25 +465,27 @@ export default {
         return new ol.style.Style({
           text: new ol.style.Text({
             //位置
-            textAlign: 'center',
+            textAlign: "center",
             //基准线
-            textBaseline: 'middle',
+            textBaseline: "middle",
             //文字样式
-            font: 'normal 14px 微软雅黑',
+            font: "normal 14px 微软雅黑",
             //文本内容
-            text: feature.get('name'),
+            text: feature.get("name"),
             //文本填充样式（即文字颜色）
-            fill: new ol.style.Fill({ color: '#aa3300' }),
-            stroke: new ol.style.Stroke({ color: '#ffcc33', width: 2 }),
+            fill: new ol.style.Fill({ color: "#aa3300" }),
+            stroke: new ol.style.Stroke({ color: "#ffcc33", width: 2 }),
           }),
         })
       }
 
       //实例化Vector要素，通过矢量图层添加到地图容器中
       var iconFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857')),
+        geometry: new ol.geom.Point(
+          ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857")
+        ),
         //名称属性
-        name: '北京市',
+        name: "北京市",
         //大概人口数（万）
         population: 2115,
       })
@@ -432,7 +501,7 @@ export default {
       this.map.addLayer(vectorLayer)
     },
     addManyPoints() {
-      console.log('点聚合')
+      console.log("点聚合")
     },
     addPicAndText() {
       /**
@@ -445,40 +514,42 @@ export default {
             /** @type {olx.style.IconOptions} */
             ({
               anchor: [0.5, 60],
-              anchorOrigin: 'top-right',
-              anchorXUnits: 'fraction',
-              anchorYUnits: 'pixels',
-              offsetOrigin: 'top-right',
+              anchorOrigin: "top-right",
+              anchorXUnits: "fraction",
+              anchorYUnits: "pixels",
+              offsetOrigin: "top-right",
               // offset:[0,10],
               //图标缩放比例
               // scale:0.5,
               //透明度
               opacity: 0.75,
               //图标的url
-              src: require('@/assets/logo.png'),
+              src: require("@/assets/logo.png"),
             })
           ),
           text: new ol.style.Text({
             //位置
-            textAlign: 'center',
+            textAlign: "center",
             //基准线
-            textBaseline: 'middle',
+            textBaseline: "middle",
             //文字样式
-            font: 'normal 14px 微软雅黑',
+            font: "normal 14px 微软雅黑",
             //文本内容
-            text: feature.get('name'),
+            text: feature.get("name"),
             //文本填充样式（即文字颜色）
-            fill: new ol.style.Fill({ color: '#aa3300' }),
-            stroke: new ol.style.Stroke({ color: '#ffcc33', width: 2 }),
+            fill: new ol.style.Fill({ color: "#aa3300" }),
+            stroke: new ol.style.Stroke({ color: "#ffcc33", width: 2 }),
           }),
         })
       }
 
       //实例化Vector要素，通过矢量图层添加到地图容器中
       var iconFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857')),
+        geometry: new ol.geom.Point(
+          ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857")
+        ),
         //名称属性
-        name: '北京市',
+        name: "北京市",
         //大概人口数（万）
         population: 2115,
       })
