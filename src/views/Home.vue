@@ -86,6 +86,11 @@ export default {
     this.initDraw()
   },
   methods: {
+    clearMap(){
+      // const layers = this.map.getLayers()
+      // this.map.removeLayer(layers)
+      // console.log(layers);
+    },
     initMap() {
       var projection = ol.proj.get("EPSG:3857")
       //分辨率
@@ -147,7 +152,16 @@ export default {
         }),
       })
     },
+    moveToPosition(postion,zoom = 14) {
+      this.map.getView().animate({
+        //将地理坐标转为投影坐标
+        center: ol.proj.transform(postion, "EPSG:4326", "EPSG:3857"),
+        duration: 500,
+        zoom: zoom,
+      })
+    },
     addPoint() {
+      this.clearMap()
       //创建一个点
       var point = new ol.Feature({
         geometry: new ol.geom.Point(
@@ -188,12 +202,9 @@ export default {
       //将绘制层添加到地图容器中
       this.map.addLayer(vector)
 
-      this.map.getView().animate({
-        //将地理坐标转为投影坐标
-        center: ol.proj.transform([116.403, 39.924], "EPSG:4326", "EPSG:3857"),
-        duration: 500,
-        zoom: 14,
-      })
+      this.moveToPosition([116.403, 39.924])
+      // const allLayers = this.map.getAllLayers()
+      // console.log(allLayers);
     },
     addLine() {
       //创建一个线
@@ -236,6 +247,7 @@ export default {
       })
       //将绘制层添加到地图容器中
       this.map.addLayer(vector)
+      this.moveToPosition([116.503, 39.994])
     },
     toPoint() {
       //这里给动画设置一个初始值
@@ -336,7 +348,7 @@ export default {
       //根据范围获取多边形
       var Rectangle = new ol.Feature({
         geometry: new ol.geom.Polygon.fromExtent([
-          8208725.0, 2035304.0, 12841418.0, 4068487.0,
+          16208725.0, 3035304.0, 9841418.0, 5068487.0,
         ]),
       })
 
@@ -368,6 +380,8 @@ export default {
       })
       //将绘制层添加到地图容器中
       this.map.addLayer(vector)
+
+      this.moveToPosition([116.403, 39.924],4)
     },
     addPointAndView() {},
     addPopup() {
@@ -455,6 +469,7 @@ export default {
       })
       console.log(vectorLayer)
       this.map.addLayer(vectorLayer)
+      this.moveToPosition([116.403, 39.924])
     },
     addText() {
       /**
@@ -499,6 +514,7 @@ export default {
         source: vectorSource,
       })
       this.map.addLayer(vectorLayer)
+      this.moveToPosition([116.403, 39.924])
     },
     addManyPoints() {
       console.log("点聚合")
@@ -563,6 +579,7 @@ export default {
         source: vectorSource,
       })
       this.map.addLayer(vectorLayer)
+      this.moveToPosition([116.403, 39.924])
     },
   },
 }
