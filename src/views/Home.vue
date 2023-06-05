@@ -383,7 +383,88 @@ export default {
 
       this.moveToPosition([116.403, 39.924],4)
     },
-    addPointAndView() {},
+    addPointAndView() {
+      var Coordinates = new Array();
+        for (var i = 0; i < 600000; i += 5000) {
+            Coordinates.push([(-30322402) + i, 5444359 - i]);
+        }
+        for (var j = 0; j < 600000; j += 5000) {
+            Coordinates.push([(-30322402) + 600000 + j, 5444359 - 600000]);
+        }
+        for (var k = 0; k < 600000; k += 5000) {
+            Coordinates.push([(-30322402) + 1200000 + k, 5444359 - 600000 - k]);
+        }
+        for (var h = 0; h < 600000; h += 5000) {
+            Coordinates.push([(-30322402) + 1800000 + h, 5444359 - 1200000]);
+
+        }
+        //将离散点构建成一条折线
+        var route = new ol.geom.LineString(Coordinates);
+        //获取直线的坐标
+        var routeCoords = route.getCoordinates();
+        var routeLength = routeCoords.length;
+
+        var routeFeature = new ol.Feature({
+            type: 'route',
+            geometry: route
+        });
+        var geoMarker = new ol.Feature({
+            type: 'geoMarker',
+            geometry: new ol.geom.Point(routeCoords[0])
+        });
+        var startMarker = new ol.Feature({
+            type: 'icon',
+            geometry: new ol.geom.Point(routeCoords[0])
+        });
+        var endMarker = new ol.Feature({
+            type: 'icon',
+            geometry: new ol.geom.Point(routeCoords[routeLength - 1])
+        });
+
+        var styles = {
+            'route': new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    width: 6,
+                    color: [237, 212, 0, 0.8]
+                })
+            }),
+            'icon': new ol.style.Style({
+                image: new ol.style.Icon({
+                    anchor: [0.5, 1],
+                    src: "../../images/stationicon.png"
+                })
+            }),
+            'geoMarker': new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 7,
+                    snapToPixel: false,
+                    fill: new ol.style.Fill({ color: 'black' }),
+                    stroke: new ol.style.Stroke({
+                        color: 'white',
+                        width: 2
+                    })
+                })
+            })
+        };
+
+        var animating = false;
+        var speed, now;
+        var speedInput = document.getElementById('speed');
+        var startButton = document.getElementById('start-animation');
+
+        var vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                features: [routeFeature, geoMarker, startMarker, endMarker]
+            }),
+            style: function (feature) {
+                //如果动画是激活的就隐藏geoMarker
+                if (animating && feature.get('type') === 'geoMarker') {
+                    return null;
+                }
+                return styles[feature.get('type')];
+            }
+        });
+    },
     addPopup() {
       this.addPic()
       /**
