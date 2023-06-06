@@ -522,6 +522,7 @@ export default {
       // 清除绘制的东西
       this.clearMap()
       this.addPic()
+      alert('请点击该图片触发popup')
       /**
        * 为map添加鼠标移动事件监听，当指向标注时改变鼠标光标状态
        */
@@ -557,7 +558,10 @@ export default {
             })
           )
           this.popupContentShow = true
+          // 这里设置这个位置放大会偏移
           popup.setPosition(evt.coordinate)
+          // 设置真实的地理坐标位置就不会偏移了
+          // popup.setPosition(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857'))
           this.map.addOverlay(popup)
         }
       })
@@ -569,7 +573,7 @@ export default {
         return new ol.style.Style({
           /**{olx.style.IconOptions}类型*/
           image: new ol.style.Icon({
-            anchor: [0.5, 60],
+            anchor: [0.5, 80],
             anchorOrigin: 'top-right',
             anchorXUnits: 'fraction',
             anchorYUnits: 'pixels',
@@ -696,8 +700,8 @@ export default {
       var features = new Array(count)
       for (var i = 0; i < count; ++i) {
         // var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e]
-        var coordinates = ol.proj.transform([Math.random() * 100 + 100, Math.random() * 10 + 35], 'EPSG:4326', 'EPSG:3857')
-        console.log(coordinates)
+        var coordinates = ol.proj.transform([Math.random()*100+100, Math.random()*10+35], 'EPSG:4326', 'EPSG:3857')
+        // console.log(coordinates)
         features[i] = new ol.Feature(new ol.geom.Point(coordinates))
       }
       //矢量要素数据源
@@ -824,7 +828,7 @@ export default {
 
       //实例化Vector要素，通过矢量图层添加到地图容器中
       var iconFeature = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857')),
+        geometry: new ol.geom.Point(ol.proj.transform([116.403, 40.024], 'EPSG:4326', 'EPSG:3857')),
         //名称属性
         name: '北京市',
         //大概人口数（万）
