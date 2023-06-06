@@ -70,6 +70,7 @@ export default {
       source: '',
       vector: '',
       popupContentShow: false,
+      layerList: []
     }
   },
   mounted() {
@@ -80,9 +81,12 @@ export default {
   },
   methods: {
     clearMap() {
-      // const layers = this.map.getLayers()
-      // this.map.removeLayer(layers)
-      // console.log(layers);
+      if (this.layerList.length) {
+        this.layerList.forEach(item => {
+          this.map.removeLayer(item)
+        })
+      }
+      this.map.getOverlays().clear()
     },
     initMap() {
       var projection = ol.proj.get('EPSG:3857')
@@ -182,11 +186,17 @@ export default {
       //将绘制层添加到地图容器中
       this.map.addLayer(vector)
 
+      // 移动位置
       this.moveToPosition([116.403, 39.924])
+
+      // 将已添加的图层装起来
+      this.layerList.push(vector)
       // const allLayers = this.map.getAllLayers()
       // console.log(allLayers);
     },
     addLine() {
+      // 清除绘制的东西
+      this.clearMap()
       //创建一个线
       var Line = new ol.Feature({
         geometry: new ol.geom.LineString([ol.proj.transform([116.403, 39.924], 'EPSG:4326', 'EPSG:3857'), ol.proj.transform([116.503, 39.994], 'EPSG:4326', 'EPSG:3857')]),
@@ -225,6 +235,8 @@ export default {
       //将绘制层添加到地图容器中
       this.map.addLayer(vector)
       this.moveToPosition([116.503, 39.994])
+      // 将已添加的图层装起来
+      this.layerList.push(vector)
     },
     toPoint() {
       //这里给动画设置一个初始值
@@ -262,6 +274,8 @@ export default {
       })
       //将绘制层添加到地图容器中
       this.map.addLayer(this.vector)
+      // 将已添加的图层装起来
+      this.layerList.push(this.vector)
     },
 
     //根据绘制类型进行交互绘制图形处理
@@ -320,6 +334,8 @@ export default {
       this.addInteraction()
     },
     addArea() {
+      // 清除绘制的东西
+      this.clearMap()
       //根据范围获取多边形
       var Rectangle = new ol.Feature({
         geometry: new ol.geom.Polygon.fromExtent([16208725.0, 3035304.0, 9841418.0, 5068487.0]),
@@ -353,10 +369,14 @@ export default {
       })
       //将绘制层添加到地图容器中
       this.map.addLayer(vector)
-
+      
       this.moveToPosition([105.403, 35.924], 4)
+       // 将已添加的图层装起来
+       this.layerList.push(vector)
     },
     addPointAndView() {
+      // 清除绘制的东西
+      this.clearMap()
       this.moveToPosition([116.403, 39.924], 4)
       var Coordinates = new Array()
       Coordinates.push(
@@ -445,6 +465,8 @@ export default {
         },
       })
       this.map.addLayer(vectorLayer)
+       // 将已添加的图层装起来
+      this.layerList.push(vectorLayer)
       var moveFeature = event => {
         var vectorContext = event.vectorContext
         var frameState = event.frameState
@@ -497,6 +519,8 @@ export default {
       }, 2000)
     },
     addPopup() {
+      // 清除绘制的东西
+      this.clearMap()
       this.addPic()
       /**
        * 为map添加鼠标移动事件监听，当指向标注时改变鼠标光标状态
@@ -539,6 +563,8 @@ export default {
       })
     },
     addPic() {
+      // 清除绘制的东西
+      this.clearMap()
       var createLabelStyle = function (feature) {
         return new ol.style.Style({
           /**{olx.style.IconOptions}类型*/
@@ -575,8 +601,12 @@ export default {
       })
       this.map.addLayer(vectorLayer)
       this.moveToPosition([116.403, 39.924])
+       // 将已添加的图层装起来
+       this.layerList.push(vectorLayer)
     },
     addText() {
+      // 清除绘制的东西
+      this.clearMap()
       /**
        * 创建矢量标注样式函数,设置image为图标ol.style.Icon
        * @param {ol.Feature} feature 要素
@@ -618,8 +648,12 @@ export default {
       })
       this.map.addLayer(vectorLayer)
       this.moveToPosition([116.403, 39.924])
+      // 将已添加的图层装起来
+      this.layerList.push(vectorLayer)
     },
     addHeatmap() {
+      // 清除绘制的东西
+      this.clearMap()
       this.moveToPosition([116.403, 39.924], 4)
       //创建一个Heatmap图层
       var vector = new ol.layer.Heatmap({
@@ -640,26 +674,29 @@ export default {
         blur: parseInt(25, 10),
       })
       //为矢量数据源添加addfeature事件监听
-      vector.getSource().on('addfeature', function (event) {
-        // 示例数据2012_Earthquakes_Mag5.kml，可从其地标名称提取地震信息
-        //要素的名称属性
-        var name = event.feature.get('name')
-        //得到要素的地震震级属性（magnitude）
-        var magnitude = parseFloat(name.substr(2))
-        //设置要素的weight属性
-        event.feature.set('weight', magnitude - 5)
-      })
+      // vector.getSource().on('addfeature', function (event) {
+      //   // 示例数据2012_Earthquakes_Mag5.kml，可从其地标名称提取地震信息
+      //   //要素的名称属性
+      //   var name = event.feature.get('name')
+      //   //得到要素的地震震级属性（magnitude）
+      //   var magnitude = parseFloat(name.substr(2))
+      //   //设置要素的weight属性
+      //   event.feature.set('weight', magnitude - 5)
+      // })
       this.map.addLayer(vector)
+      // 将已添加的图层装起来
+      this.layerList.push(vector)
     },
     addManyPoints() {
+      // 清除绘制的东西
+      this.clearMap()
       this.moveToPosition([116.403, 39.924], 7)
-      console.log('点聚合')
       //此示例创建10000个要素
       var count = 1000
       var features = new Array(count)
       for (var i = 0; i < count; ++i) {
         // var coordinates = [2 * e * Math.random() - e, 2 * e * Math.random() - e]
-        var coordinates = ol.proj.transform([Math.random()*100+100, Math.random()*10+35], 'EPSG:4326', 'EPSG:3857')
+        var coordinates = ol.proj.transform([Math.random() * 100 + 100, Math.random() * 10 + 35], 'EPSG:4326', 'EPSG:3857')
         console.log(coordinates)
         features[i] = new ol.Feature(new ol.geom.Point(coordinates))
       }
@@ -705,6 +742,8 @@ export default {
         },
       })
       this.map.addLayer(clusters)
+       // 将已添加的图层装起来
+       this.layerList.push(clusters)
       // 下面的代码是让鼠标变成小手，并且有点击事件
       this.map.on('pointermove', e => {
         var pixel = this.map.getEventPixel(e.originalEvent)
@@ -742,7 +781,6 @@ export default {
           this.map.addOverlay(popup)
         }
       })
-
     },
     addPicAndText() {
       /**
@@ -803,6 +841,8 @@ export default {
       })
       this.map.addLayer(vectorLayer)
       this.moveToPosition([116.403, 39.924])
+        // 将已添加的图层装起来
+        this.layerList.push(vectorLayer)
     },
   },
 }
