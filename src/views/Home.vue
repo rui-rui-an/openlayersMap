@@ -844,7 +844,7 @@ export default {
         source: vectorSource,
       })
       this.map.addLayer(vectorLayer)
-      this.moveToPosition([116.403, 39.924])
+      this.moveToPosition([116.403, 40.024])
         // 将已添加的图层装起来
         this.layerList.push(vectorLayer)
     },
